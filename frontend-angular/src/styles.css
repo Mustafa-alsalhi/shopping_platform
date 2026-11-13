@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+  }
+
+  body {
+    @apply bg-gradient-to-br from-amber-50 to-orange-50 text-gray-900 font-sans antialiased m-0 p-0 w-full overflow-x-hidden;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+html[dir="rtl"] .flex-row-reverse {
+  flex-direction: row !important;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-300;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-amber-600 to-amber-700 text-white hover:from-amber-700 hover:to-amber-800 focus:ring-amber-500 shadow-lg hover:shadow-xl;
+  }
+
+  .btn-secondary {
+    @apply bg-gradient-to-r from-gray-600 to-gray-700 text-white hover:from-gray-700 hover:to-gray-800 focus:ring-gray-500 shadow-lg;
+  }
+
+  .btn-success {
+    @apply bg-gradient-to-r from-emerald-600 to-emerald-700 text-white hover:from-emerald-700 hover:to-emerald-800 focus:ring-emerald-500;
+  }
+
+  .btn-error {
+    @apply bg-gradient-to-r from-rose-600 to-rose-700 text-white hover:from-rose-700 hover:to-rose-800 focus:ring-rose-500;
+  }
+
+  .btn-outline {
+    @apply bg-transparent border border-amber-400 text-amber-700 hover:bg-amber-50;
+  }
+
+  .input {
+    @apply block w-full px-3 py-2 border border-amber-300 rounded-lg shadow-sm placeholder-amber-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 bg-white/90 sm:text-sm transition-all duration-300;
+  }
+
+  .card {
+    @apply bg-white/90 backdrop-blur-sm overflow-hidden shadow-lg rounded-xl border border-amber-200/40;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+}
+
