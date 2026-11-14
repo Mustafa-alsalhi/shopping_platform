@@ -284,9 +284,10 @@ export class LoginComponent implements OnDestroy {
   }
 
   private redirectByRole(role?: string) {
-    if (role === 'admin') this.router.navigate(['/admin/dashboard']);
-    else if (role === 'seller') this.router.navigate(['/seller/dashboard']);
-    else if (role === 'driver') this.router.navigate(['/driver/dashboard']);
+    const r = (role || '').toLowerCase();
+    if (r === 'admin') this.router.navigate(['/admin/dashboard']);
+    else if (r === 'seller') this.router.navigate(['/seller/dashboard']);
+    else if (r === 'driver') this.router.navigate(['/driver/dashboard']);
     else this.router.navigate(['/']);
   }
 }

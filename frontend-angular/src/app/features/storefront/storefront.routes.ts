@@ -1,5 +1,12 @@
 import { inject } from '@angular/core';
-import { Router, Routes } from '@angular/router';
+import { Router, Routes, UrlSegment } from '@angular/router';
+
+export function numericSellerMatcher(url: UrlSegment[]) {
+  if (url.length === 2 && url[0].path === 'seller' && /^\d+$/.test(url[1].path)) {
+    return { consumed: url, posParams: { id: url[1] } };
+  }
+  return null;
+}
 
 export const STOREFRONT_ROUTES: Routes = [
   { path: '', loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent) },
@@ -8,7 +15,7 @@ export const STOREFRONT_ROUTES: Routes = [
   { path: 'categories', loadComponent: () => import('./pages/categories/categories.component').then(m => m.CategoriesComponent) },
   { path: 'coupons', loadComponent: () => import('./pages/coupons/coupons.component').then(m => m.CouponsComponent) },
   { path: 'offers', loadComponent: () => import('./pages/offers/offers.component').then(m => m.OffersComponent) },
-  { path: 'seller/:id', loadComponent: () => import('./pages/seller-detail/seller-detail.component').then(m => m.SellerDetailComponent) },
+  { matcher: numericSellerMatcher, loadComponent: () => import('./pages/seller-detail/seller-detail.component').then(m => m.SellerDetailComponent) },
   { path: 'sellers', loadComponent: () => import('./pages/sellers/sellers.component').then(m => m.SellersComponent) },
   { path: 'restaurant/:id', loadComponent: () => import('./pages/seller-detail/seller-detail.component').then(m => m.SellerDetailComponent) },
   { path: 'place/:id', loadComponent: () => import('./pages/seller-detail/seller-detail.component').then(m => m.SellerDetailComponent) },
