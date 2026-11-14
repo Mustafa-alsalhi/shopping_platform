@@ -252,7 +252,7 @@ public class DriverPortalController : ControllerBase
 
         if (user.DriverProfile == null)
         {
-            user.DriverProfile = new Driver
+            user.DriverProfile = new MyStore.Domain.Entities.Driver
             {
                 UserId = user.Id,
                 VehicleType = vehicle_type ?? "motorcycle",

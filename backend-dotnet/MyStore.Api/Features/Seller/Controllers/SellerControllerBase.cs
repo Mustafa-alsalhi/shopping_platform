@@ -29,7 +29,7 @@ public abstract class SellerControllerBase : ControllerBase
             return ulong.TryParse(claim, out var id) ? id : null;
         }
 
-    protected async Task<Seller?> GetCurrentSellerAsync()
+    protected async Task<MyStore.Domain.Entities.Seller?> GetCurrentSellerAsync()
         {
             var userId = GetCurrentUserId();
             if (!userId.HasValue) return null;

@@ -207,9 +207,9 @@ public class AdminProductsController : AdminControllerBase
                             {
                                 VariantId = variant.Id,
                                 Value = oDto.Value ?? "",
-                                PriceAdjustment = oDto.PriceAdjustment ?? 0,
+                                PriceDelta = oDto.PriceDelta,
                                 Stock = oDto.Stock ?? 10,
-                                ColorHex = oDto.ColorHex,
+                                ColorCode = oDto.ColorCode,
                                 Position = optPos++,
                                 CreatedAt = DateTime.UtcNow,
                                 UpdatedAt = DateTime.UtcNow

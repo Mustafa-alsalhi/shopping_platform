@@ -81,7 +81,7 @@ public class AdminDriversController : AdminControllerBase
             _db.Users.Add(user);
             await _db.SaveChangesAsync();
     
-            var driverProfile = new Driver
+            var driverProfile = new MyStore.Domain.Entities.Driver
             {
                 UserId = user.Id,
                 VehicleType = req.VehicleType ?? "motorcycle",

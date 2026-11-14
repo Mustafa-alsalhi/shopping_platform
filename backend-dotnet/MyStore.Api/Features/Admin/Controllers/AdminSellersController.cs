@@ -42,7 +42,7 @@ public class AdminSellersController : AdminControllerBase
     [HttpPost("sellers")]
         public async Task<IActionResult> CreateSeller([FromBody] AdminSellerInput req)
         {
-            var seller = new Seller
+            var seller = new MyStore.Domain.Entities.Seller
             {
                 UserId = req.UserId,
                 Name = req.Name,

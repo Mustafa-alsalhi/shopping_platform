@@ -696,7 +696,7 @@ public class AuthController : ControllerBase
         if (request.SignedContractImageFile != null)
             signedContractUrl = await _fileStorage.SaveFileAsync(request.SignedContractImageFile.OpenReadStream(), request.SignedContractImageFile.FileName, "sellers/documents", baseUrl);
 
-        var seller = new Seller
+        var seller = new MyStore.Domain.Entities.Seller
         {
             UserId = user.Id,
             StoreName = request.StoreName,

@@ -142,7 +142,7 @@ public class CatalogAndStorefrontController : ControllerBase
         };
     }
 
-    private object FormatSellerSummary(Seller s)
+    private object FormatSellerSummary(MyStore.Domain.Entities.Seller s)
     {
         var logoUrl = ImageUrlHelper.Resolve(Request, _env, s.Avatar ?? s.AvatarImage, "images/sellers");
         var coverUrl = ImageUrlHelper.Resolve(Request, _env, s.CoverImage, "images/sellers");
