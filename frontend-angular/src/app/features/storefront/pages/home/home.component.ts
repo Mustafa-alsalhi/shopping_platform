@@ -14,19 +14,19 @@ import { ProductCardComponent } from '../../../../shared/components/product-card
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule, ProductCardComponent],
   template: `
-    <div class="max-w-7xl mx-auto px-4 py-6 space-y-10">
+    <div class="max-w-7xl mx-auto px-4 py-6 space-y-7">
       <!-- Dynamic Multi-Activity Switcher Tabs -->
-      <div class="flex items-center justify-center gap-3 flex-wrap">
+      <div class="bg-white rounded-3xl border border-amber-100/90 shadow-sm p-3.5 sm:p-4 flex items-center justify-center gap-3 flex-wrap">
         <button
           type="button"
           (click)="switchActivity('store')"
-          [class]="activeTab() === 'store' ? 'btn btn-primary px-6 py-3 font-extrabold' : 'btn btn-outline px-6 py-3 font-bold bg-white'">
+          [class]="activeTab() === 'store' ? 'btn btn-primary px-6 py-2.5 rounded-2xl font-extrabold shadow-md' : 'btn btn-outline px-6 py-2.5 rounded-2xl font-bold bg-amber-50/40 hover:bg-amber-50 border-amber-200'">
           🛍️ المتاجر والتسوق
         </button>
         <button
           type="button"
           (click)="switchActivity('restaurant')"
-          [class]="activeTab() === 'restaurant' ? 'btn btn-primary px-6 py-3 font-extrabold' : 'btn btn-outline px-6 py-3 font-bold bg-white'">
+          [class]="activeTab() === 'restaurant' ? 'btn btn-primary px-6 py-2.5 rounded-2xl font-extrabold shadow-md' : 'btn btn-outline px-6 py-2.5 rounded-2xl font-bold bg-amber-50/40 hover:bg-amber-50 border-amber-200'">
           🍔 المطاعم والكافيهات
         </button>
         @for (act of activities(); track act.id) {
@@ -34,7 +34,7 @@ import { ProductCardComponent } from '../../../../shared/components/product-card
             <button
               type="button"
               (click)="switchActivity(act.slug)"
-              [class]="activeTab() === act.slug ? 'btn btn-primary px-6 py-3 font-extrabold' : 'btn btn-outline px-6 py-3 font-bold bg-white'">
+              [class]="activeTab() === act.slug ? 'btn btn-primary px-6 py-2.5 rounded-2xl font-extrabold shadow-md' : 'btn btn-outline px-6 py-2.5 rounded-2xl font-bold bg-amber-50/40 hover:bg-amber-50 border-amber-200'">
               ✨ {{ act.name }}
             </button>
           }
@@ -44,7 +44,7 @@ import { ProductCardComponent } from '../../../../shared/components/product-card
       <!-- Hero Banner Carousel -->
       @if (banners().length > 0) {
         <div
-          class="relative rounded-2xl overflow-hidden shadow-xl bg-gradient-to-r from-amber-700 via-amber-600 to-orange-600 text-white h-[280px] sm:h-[340px] md:h-[380px] group"
+          class="relative rounded-3xl overflow-hidden shadow-lg border border-amber-200/60 bg-gradient-to-r from-amber-700 via-amber-600 to-orange-600 text-white h-[280px] sm:h-[340px] md:h-[380px] group"
           (mouseenter)="pauseAutoPlay()"
           (mouseleave)="startAutoPlay()">
           @for (banner of banners(); track banner.id; let i = $index) {
@@ -113,18 +113,26 @@ import { ProductCardComponent } from '../../../../shared/components/product-card
       }
 
       <!-- Categories Strip -->
-      <section>
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-xl font-extrabold text-gray-900">الأقسام والتصنيفات</h3>
-          <a routerLink="/categories" class="text-sm text-amber-700 font-bold hover:underline">عرض الكل ←</a>
+      <section class="bg-white rounded-3xl border border-amber-100/90 shadow-sm p-5 sm:p-7">
+        <div class="flex items-center justify-between gap-4 mb-5 pb-4 border-b border-amber-100/70">
+          <div class="flex items-center gap-3">
+            <span class="w-1.5 h-8 rounded-full bg-gradient-to-b from-amber-500 to-orange-600"></span>
+            <div>
+              <h3 class="text-lg sm:text-xl font-extrabold text-gray-900">الأقسام والتصنيفات</h3>
+              <p class="text-xs text-gray-500">تصفح الأقسام المتوفرة واختر ما يناسبك</p>
+            </div>
+          </div>
+          <a routerLink="/categories" class="inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-amber-50 text-amber-800 text-xs sm:text-sm font-bold hover:bg-amber-100 transition">
+            عرض الكل ←
+          </a>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4">
           @for (cat of categories(); track cat.id) {
             <a
               [routerLink]="['/products']"
               [queryParams]="{ category: cat.slug, type: activeTab() }"
-              class="card p-4 text-center hover:border-amber-400 hover:shadow-md transition group">
-              <div class="w-16 h-16 mx-auto mb-2 rounded-full bg-amber-100 overflow-hidden flex items-center justify-center text-amber-700 font-bold text-lg group-hover:scale-110 transition border border-amber-200">
+              class="rounded-2xl border border-amber-100 bg-amber-50/20 p-4 text-center hover:bg-white hover:border-amber-400 hover:shadow-md transition group">
+              <div class="w-16 h-16 mx-auto mb-2.5 rounded-full bg-amber-100 overflow-hidden flex items-center justify-center text-amber-700 font-bold text-lg group-hover:scale-110 transition border border-amber-200">
                 @if (cat.image || cat.image_url) {
                   <img [src]="cat.image || cat.image_url" [alt]="cat.name" class="w-full h-full object-cover" onerror="this.style.display='none'" />
                 } @else {
@@ -139,12 +147,22 @@ import { ProductCardComponent } from '../../../../shared/components/product-card
       </section>
 
       <!-- Stores / Restaurants Section -->
-      <section>
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-xl font-extrabold text-gray-900">
-            {{ activeTab() === 'restaurant' ? 'أبرز المطاعم والكافيهات' : 'أبرز المتاجر المعتمدة' }}
-          </h3>
-          <a routerLink="/sellers" [queryParams]="{ type: activeTab() }" class="text-sm text-amber-700 font-bold hover:underline">عرض الكل ←</a>
+      <section class="bg-white rounded-3xl border border-amber-100/90 shadow-sm p-5 sm:p-7">
+        <div class="flex items-center justify-between gap-4 mb-5 pb-4 border-b border-amber-100/70">
+          <div class="flex items-center gap-3">
+            <span class="w-1.5 h-8 rounded-full bg-gradient-to-b from-amber-500 to-orange-600"></span>
+            <div>
+              <h3 class="text-lg sm:text-xl font-extrabold text-gray-900">
+                {{ activeTab() === 'restaurant' ? 'أبرز المطاعم والكافيهات' : 'أبرز المتاجر المعتمدة' }}
+              </h3>
+              <p class="text-xs text-gray-500">
+                {{ activeTab() === 'restaurant' ? 'اطلب من أشهر المطاعم القريبة منك' : 'تسوق من أفضل المتاجر الموثوقة' }}
+              </p>
+            </div>
+          </div>
+          <a routerLink="/sellers" [queryParams]="{ type: activeTab() }" class="inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-amber-50 text-amber-800 text-xs sm:text-sm font-bold hover:bg-amber-100 transition">
+            عرض الكل ←
+          </a>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
           @for (s of sellers(); track s.id) {
@@ -182,14 +200,24 @@ import { ProductCardComponent } from '../../../../shared/components/product-card
       </section>
 
       <!-- Products / Meals Grid -->
-      <section>
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-xl font-extrabold text-gray-900">
-            {{ activeTab() === 'restaurant' ? 'أشهى الوجبات والأطباق' : 'أحدث المنتجات المختارة' }}
-          </h3>
-          <a routerLink="/products" [queryParams]="{ type: activeTab() }" class="text-sm text-amber-700 font-bold hover:underline">عرض الكل ←</a>
+      <section class="bg-white rounded-3xl border border-amber-100/90 shadow-sm p-5 sm:p-7">
+        <div class="flex items-center justify-between gap-4 mb-5 pb-4 border-b border-amber-100/70">
+          <div class="flex items-center gap-3">
+            <span class="w-1.5 h-8 rounded-full bg-gradient-to-b from-amber-500 to-orange-600"></span>
+            <div>
+              <h3 class="text-lg sm:text-xl font-extrabold text-gray-900">
+                {{ activeTab() === 'restaurant' ? 'أشهى الوجبات والأطباق' : 'أحدث المنتجات المختارة' }}
+              </h3>
+              <p class="text-xs text-gray-500">
+                {{ activeTab() === 'restaurant' ? 'اختيارات مميزة تصلك طازجة وساخنة' : 'تشكيلة مختارة بأفضل الأسعار والجودة' }}
+              </p>
+            </div>
+          </div>
+          <a routerLink="/products" [queryParams]="{ type: activeTab() }" class="inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-amber-50 text-amber-800 text-xs sm:text-sm font-bold hover:bg-amber-100 transition">
+            عرض الكل ←
+          </a>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
           @for (prod of products(); track prod.id) {
             <app-product-card [product]="prod"></app-product-card>
           }
