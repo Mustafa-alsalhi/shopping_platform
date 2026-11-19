@@ -11,6 +11,122 @@
 
 ---
 
+## لقطات من النظام (Platform Screenshots)
+
+### 1. واجهة المتجر والتسوق (Storefront & Catalog)
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <strong>الصفحة الرئيسية — المتاجر والأنشطة</strong><br/>
+      <img src="docs/screenshots/storefront-home.png" alt="الصفحة الرئيسية للمنصة" />
+    </td>
+    <td width="50%" align="center">
+      <strong>قسم المطاعم والوجبات</strong><br/>
+      <img src="docs/screenshots/%D8%AE%D8%A7%D8%B5%20%D9%81%D9%8A%20%D8%A7%D9%84%D9%85%D8%B7%D8%A7%D8%B9%D9%85.png" alt="قسم المطاعم" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <strong>كتالوج المنتجات — العرض الأول</strong><br/>
+      <img src="docs/screenshots/product-catalog.png" alt="كتالوج المنتجات" />
+    </td>
+    <td width="50%" align="center">
+      <strong>كتالوج المنتجات — التصفية والبحث</strong><br/>
+      <img src="docs/screenshots/product-catalog22.png" alt="كتالوج المنتجات والتصفية" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <strong>تفاصيل المنتج والمتغيرات</strong><br/>
+      <img src="docs/screenshots/product-details.png" alt="تفاصيل المنتج" />
+    </td>
+    <td width="50%" align="center">
+      <strong>تفاصيل المنتج — الخيارات والتقييمات</strong><br/>
+      <img src="docs/screenshots/product-details22.png" alt="خيارات وتقييمات المنتج" />
+    </td>
+  </tr>
+</table>
+
+### 2. رحلة العميل: السلة، الدفع الخرائطي، وتتبع الطلب (Cart, Checkout & Tracking)
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <strong>سلة التسوق</strong><br/>
+      <img src="docs/screenshots/%D8%A7%D9%84%D8%B3%D9%84%D8%A9.png" alt="سلة التسوق" />
+    </td>
+    <td width="50%" align="center">
+      <strong>تتبع حالة الطلب</strong><br/>
+      <img src="docs/screenshots/%D8%AA%D8%AA%D8%A8%D8%B9%20%D8%A7%D9%84%D8%B7%D9%84%D8%A8.png" alt="تتبع الطلب" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <strong>إتمام الطلب وتحديد الموقع على الخريطة</strong><br/>
+      <img src="docs/screenshots/%D8%A7%D9%84%D8%AF%D9%81%D8%B9.png" alt="صفحة الدفع والخريطة" />
+    </td>
+    <td width="50%" align="center">
+      <strong>ملخص الفاتورة وخيارات الدفع</strong><br/>
+      <img src="docs/screenshots/%D8%A7%D9%84%D8%AF%D9%81%D8%B922.png" alt="خيارات الدفع" />
+    </td>
+  </tr>
+</table>
+
+### 3. لوحة تحكم الإدارة (Admin Portal)
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <strong>لوحة الإحصائيات والقيادة العامة للمدير</strong><br/>
+      <img src="docs/screenshots/%D9%84%D9%88%D8%AD%D8%A9%20%D8%A7%D9%84%D8%A5%D8%AD%D8%B5%D8%A7%D8%A6%D9%8A%D8%A7%D8%AA%20%D9%84%D9%84%D9%88%D8%AD%D8%A9%20%D8%A7%D9%84%D9%85%D8%AF%D9%8A%D8%B1.png" alt="لوحة إحصائيات المدير" />
+    </td>
+    <td width="50%" align="center">
+      <strong>مراجعة وتأكيد طلبات الدفع والتحويلات</strong><br/>
+      <img src="docs/screenshots/%D8%B7%D9%84%D8%A8%D8%A7%D8%AA%20%D8%AA%D8%A7%D9%83%D9%8A%D8%AF%20%D8%A7%D9%84%D8%AF%D9%81%D8%B922.png" alt="طلبات تأكيد الدفع" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <strong>إدارة الطلبات والتوصيل</strong><br/>
+      <img src="docs/screenshots/%D8%A7%D8%AF%D8%A7%D8%B1%D8%A9%20%D8%A7%D9%84%D8%B7%D9%84%D8%A8%D8%A7%D8%AA%20.png" alt="إدارة الطلبات" />
+    </td>
+    <td width="50%" align="center">
+      <strong>إدارة المنتجات</strong><br/>
+      <img src="docs/screenshots/%D8%A7%D8%AF%D8%A7%D8%B1%D8%A9%20%D8%A7%D9%84%D9%85%D9%86%D8%AA%D8%AC%D8%A7%D8%AA.png" alt="إدارة المنتجات" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <strong>إدارة المستخدمين والبائعين والمندوبين</strong><br/>
+      <img src="docs/screenshots/admin-users-sellers-drivers.png" alt="إدارة المستخدمين والبائعين والمندوبين" />
+    </td>
+    <td width="50%" align="center">
+      <strong>إدارة المستخدمين والبائعين والمندوبين — تفاصيل</strong><br/>
+      <img src="docs/screenshots/admin-users-sellers-drivers22.png" alt="تفاصيل إدارة الشركاء" />
+    </td>
+  </tr>
+</table>
+
+### 4. لوحة تحكم البائع وبوابة المندوب (Seller & Driver Portals)
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <strong>لوحة إحصائيات وأرباح البائع</strong><br/>
+      <img src="docs/screenshots/%D8%A7%D8%AD%D8%B5%D8%A7%D8%A6%D9%8A%D8%A7%D8%AA%20%D9%84%D9%88%D8%AD%D8%A9%20%D8%A7%D9%84%D8%A8%D8%A7%D8%A6%D8%B9.png" alt="إحصائيات لوحة البائع" />
+    </td>
+    <td width="50%" align="center">
+      <strong>لوحة إحصائيات مندوب التوصيل</strong><br/>
+      <img src="docs/screenshots/%D8%A7%D8%AD%D8%B5%D8%A7%D8%A6%D9%8A%D8%A7%D8%AA%20%D8%A7%D9%84%D9%85%D9%86%D8%AF%D9%88%D8%A8.png" alt="إحصائيات المندوب" />
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <strong>بوابة المندوب — إدارة طلبات التوصيل</strong><br/>
+      <img src="docs/screenshots/%D8%A7%D9%84%D9%85%D9%86%D8%AF%D9%88%D8%A8.png" alt="بوابة المندوب" width="65%" />
+    </td>
+  </tr>
+</table>
+
+---
+
 ## المعمارية والهندسة البرمجية (Architecture & Engineering)
 
 ### 1. الواجهة الخلفية (`backend-dotnet/`) — ASP.NET Core 8
