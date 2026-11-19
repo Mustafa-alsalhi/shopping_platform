@@ -41,23 +41,29 @@ import { ProductCardComponent } from '../../../../shared/components/product-card
         }
       </div>
 
-      <!-- Hero Banner Carousel -->
+      <!-- Home Banners -->
       @if (banners().length > 0) {
-        <div class="relative rounded-2xl overflow-hidden shadow-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white min-h-[260px] flex items-center">
-          <img
-            [src]="banners()[currentBannerIndex()].image_url"
-            [alt]="banners()[currentBannerIndex()].title"
-            class="absolute inset-0 w-full h-full object-cover opacity-40"
-            onerror="this.style.display='none'" />
-          <div class="relative z-10 p-8 md:p-12 max-w-2xl space-y-4">
-            <h2 class="text-2xl md:text-4xl font-extrabold">{{ banners()[currentBannerIndex()].title || 'عروض منصة أصالة الحصرية' }}</h2>
-            <p class="text-sm md:text-base text-amber-100">{{ banners()[currentBannerIndex()].description }}</p>
-            @if (banners()[currentBannerIndex()].link_url) {
-              <a [routerLink]="banners()[currentBannerIndex()].link_url" class="btn bg-white text-amber-800 font-bold hover:bg-amber-50">
-                {{ banners()[currentBannerIndex()].link_text || 'تسوق الآن' }}
-              </a>
-            }
-          </div>
+        <div class="grid grid-cols-1 gap-4" [class.md:grid-cols-2]="banners().length > 1">
+          @for (banner of banners(); track banner.id) {
+            <div class="relative rounded-2xl overflow-hidden shadow-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white min-h-[260px] flex items-center justify-center text-center">
+              <img
+                [src]="banner.image_url"
+                [alt]="banner.title"
+                class="absolute inset-0 w-full h-full object-cover opacity-45"
+                onerror="this.style.display='none'" />
+              <div class="relative z-10 p-8 md:p-12 max-w-2xl mx-auto flex flex-col items-center justify-center text-center space-y-4">
+                <h2 class="text-2xl md:text-4xl font-extrabold">{{ banner.title || 'عروض منصة أصالة الحصرية' }}</h2>
+                @if (banner.description) {
+                  <p class="text-sm md:text-base text-amber-100">{{ banner.description }}</p>
+                }
+                @if (banner.link_url) {
+                  <a [routerLink]="banner.link_url" class="btn bg-white text-amber-800 font-bold hover:bg-amber-50">
+                    {{ banner.link_text || 'تسوق الآن' }}
+                  </a>
+                }
+              </div>
+            </div>
+          }
         </div>
       }
 
