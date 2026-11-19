@@ -167,6 +167,10 @@ export class SellerService {
     return this.http.get<any>(`${this.apiUrl}/reports/kpis`);
   }
 
+  getSalesTrends(period: 'daily' | 'weekly' | 'monthly' = 'daily'): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/reports/sales-trends`, { params: { period } });
+  }
+
   getTopProducts(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/reports/top-products`);
   }
