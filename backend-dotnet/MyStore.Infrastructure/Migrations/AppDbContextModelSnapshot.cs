@@ -331,7 +331,7 @@ namespace MyStore.Infrastructure.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("dimensions");
 
-                    b.Property<bool?>("Featured")
+                    b.Property<bool>("Featured")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("featured");
 
@@ -2428,7 +2428,7 @@ namespace MyStore.Infrastructure.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("dimensions");
 
-                    b.Property<bool?>("Featured")
+                    b.Property<bool>("Featured")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("featured");
 

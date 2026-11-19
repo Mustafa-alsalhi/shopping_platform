@@ -54,10 +54,10 @@ public class Cart
     public string? ShortDescription { get; set; }
 
     [Column("status")]
-    public string? Status { get; set; }
+    public string? Status { get; set; } = "active";
 
     [Column("featured")]
-    public bool? Featured { get; set; }
+    public bool Featured { get; set; } = false;
 
     [Column("variant_attributes")]
     public string? VariantAttributes { get; set; }

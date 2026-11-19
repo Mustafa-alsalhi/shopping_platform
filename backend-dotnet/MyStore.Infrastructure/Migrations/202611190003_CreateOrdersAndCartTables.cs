@@ -45,7 +45,7 @@ namespace MyStore.Infrastructure.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     status = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    featured = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    featured = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValue: false),
                     variant_attributes = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     currency = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: true)
