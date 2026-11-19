@@ -127,6 +127,12 @@
 
 ---
 
+## الوثائق الهندسية التفصيلية (Technical Documentation)
+- 📐 **[مخطط قاعدة البيانات الكامل (ERD & Data Dictionary)](docs/erd.md)** — يشمل جميع الجداول الـ 29 والعلاقات والفهارس والـ 5 Migrations.
+- 🏗️ **[ملف الهيكلية والمعمارية الشاملة (System Architecture)](docs/architecture.md)** — يشمل معمارية Clean + Feature-Based في .NET وAngular وتدفقات الأمان والمحاسبة والتوصيل.
+
+---
+
 ## المعمارية والهندسة البرمجية (Architecture & Engineering)
 
 ### 1. الواجهة الخلفية (`backend-dotnet/`) — ASP.NET Core 8
