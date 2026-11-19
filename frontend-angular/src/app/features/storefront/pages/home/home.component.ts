@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -41,27 +41,72 @@ import { ProductCardComponent } from '../../../../shared/components/product-card
         }
       </div>
 
-      <!-- Home Banners -->
+      <!-- Hero Banner Carousel -->
       @if (banners().length > 0) {
-        <div class="grid grid-cols-1 gap-4" [class.md:grid-cols-2]="banners().length > 1">
-          @for (banner of banners(); track banner.id) {
-            <div class="relative rounded-2xl overflow-hidden shadow-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white min-h-[260px] flex items-center justify-center text-center">
+        <div
+          class="relative rounded-2xl overflow-hidden shadow-xl bg-gradient-to-r from-amber-700 via-amber-600 to-orange-600 text-white h-[280px] sm:h-[340px] md:h-[380px] group"
+          (mouseenter)="pauseAutoPlay()"
+          (mouseleave)="startAutoPlay()">
+          @for (banner of banners(); track banner.id; let i = $index) {
+            <div
+              class="absolute inset-0 flex items-center justify-center text-center transition-all duration-700 ease-in-out"
+              [class.opacity-100]="currentBannerIndex() === i"
+              [class.scale-100]="currentBannerIndex() === i"
+              [class.z-10]="currentBannerIndex() === i"
+              [class.opacity-0]="currentBannerIndex() !== i"
+              [class.scale-105]="currentBannerIndex() !== i"
+              [class.pointer-events-none]="currentBannerIndex() !== i">
               <img
                 [src]="banner.image_url"
                 [alt]="banner.title"
-                class="absolute inset-0 w-full h-full object-cover opacity-45"
+                class="absolute inset-0 w-full h-full object-cover"
                 onerror="this.style.display='none'" />
-              <div class="relative z-10 p-8 md:p-12 max-w-2xl mx-auto flex flex-col items-center justify-center text-center space-y-4">
-                <h2 class="text-2xl md:text-4xl font-extrabold">{{ banner.title || 'عروض منصة أصالة الحصرية' }}</h2>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/45 to-black/30"></div>
+              <div class="relative z-10 px-12 sm:px-16 py-8 max-w-3xl mx-auto flex flex-col items-center justify-center text-center space-y-4">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold drop-shadow-md">
+                  {{ banner.title || 'عروض منصة أصالة الحصرية' }}
+                </h2>
                 @if (banner.description) {
-                  <p class="text-sm md:text-base text-amber-100">{{ banner.description }}</p>
+                  <p class="text-sm sm:text-base md:text-lg text-amber-50/95 max-w-2xl drop-shadow">
+                    {{ banner.description }}
+                  </p>
                 }
                 @if (banner.link_url) {
-                  <a [routerLink]="banner.link_url" class="btn bg-white text-amber-800 font-bold hover:bg-amber-50">
+                  <a [routerLink]="banner.link_url" class="btn bg-white text-amber-800 font-extrabold px-6 py-2.5 rounded-xl shadow-lg hover:bg-amber-50 hover:scale-105 transition">
                     {{ banner.link_text || 'تسوق الآن' }}
                   </a>
                 }
               </div>
+            </div>
+          }
+
+          @if (banners().length > 1) {
+            <!-- Previous / Next Controls -->
+            <button
+              type="button"
+              (click)="prevBanner()"
+              aria-label="الإعلان السابق"
+              class="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/35 hover:bg-black/60 backdrop-blur-sm text-white flex items-center justify-center transition opacity-80 sm:opacity-0 sm:group-hover:opacity-100 shadow-lg">
+              <span class="text-lg font-bold leading-none">›</span>
+            </button>
+            <button
+              type="button"
+              (click)="nextBanner()"
+              aria-label="الإعلان التالي"
+              class="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/35 hover:bg-black/60 backdrop-blur-sm text-white flex items-center justify-center transition opacity-80 sm:opacity-0 sm:group-hover:opacity-100 shadow-lg">
+              <span class="text-lg font-bold leading-none">‹</span>
+            </button>
+
+            <!-- Slide Indicators -->
+            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-black/25 backdrop-blur-sm px-3 py-1.5 rounded-full">
+              @for (banner of banners(); track banner.id; let i = $index) {
+                <button
+                  type="button"
+                  (click)="goToBanner(i)"
+                  [attr.aria-label]="'الانتقال إلى الإعلان ' + (i + 1)"
+                  class="h-2 rounded-full transition-all duration-300"
+                  [ngClass]="currentBannerIndex() === i ? 'w-7 bg-white' : 'w-2 bg-white/50 hover:bg-white/80'"></button>
+              }
             </div>
           }
         </div>
@@ -153,9 +198,10 @@ import { ProductCardComponent } from '../../../../shared/components/product-card
     </div>
   `
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   private readonly storefront = inject(StorefrontService);
   private readonly route = inject(ActivatedRoute);
+  private bannerTimer: ReturnType<typeof setInterval> | null = null;
 
   readonly activeTab = signal<string>('store');
   readonly activities = signal<Activity[]>([]);
@@ -177,10 +223,53 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.pauseAutoPlay();
+  }
+
+  startAutoPlay(): void {
+    this.pauseAutoPlay();
+    if (this.banners().length > 1) {
+      this.bannerTimer = setInterval(() => {
+        this.nextBanner();
+      }, 5000);
+    }
+  }
+
+  pauseAutoPlay(): void {
+    if (this.bannerTimer !== null) {
+      clearInterval(this.bannerTimer);
+      this.bannerTimer = null;
+    }
+  }
+
+  nextBanner(): void {
+    const count = this.banners().length;
+    if (count > 1) {
+      this.currentBannerIndex.update((i) => (i + 1) % count);
+    }
+  }
+
+  prevBanner(): void {
+    const count = this.banners().length;
+    if (count > 1) {
+      this.currentBannerIndex.update((i) => (i - 1 + count) % count);
+    }
+  }
+
+  goToBanner(index: number): void {
+    this.currentBannerIndex.set(index);
+    this.startAutoPlay();
+  }
+
   switchActivity(type: string) {
     this.activeTab.set(type);
+    this.currentBannerIndex.set(0);
     this.storefront.getBanners('home', type).subscribe({
-      next: (res) => this.banners.set(res?.data || []),
+      next: (res) => {
+        this.banners.set(res?.data || []);
+        this.startAutoPlay();
+      },
       error: () => {}
     });
     this.storefront.getCategories(type).subscribe({
