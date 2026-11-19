@@ -14,19 +14,19 @@ import { ProductCardComponent } from '../../../../shared/components/product-card
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule, ProductCardComponent],
   template: `
-    <div class="max-w-7xl mx-auto px-4 py-6 space-y-7">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3 space-y-3">
       <!-- Dynamic Multi-Activity Switcher Tabs -->
-      <div class="bg-white rounded-3xl border border-amber-100/90 shadow-sm p-3.5 sm:p-4 flex items-center justify-center gap-3 flex-wrap">
+      <div class="bg-white rounded-none border border-amber-100/90 shadow-sm p-2.5 sm:p-3 flex items-center justify-center gap-2.5 flex-wrap">
         <button
           type="button"
           (click)="switchActivity('store')"
-          [class]="activeTab() === 'store' ? 'btn btn-primary px-6 py-2.5 rounded-2xl font-extrabold shadow-md' : 'btn btn-outline px-6 py-2.5 rounded-2xl font-bold bg-amber-50/40 hover:bg-amber-50 border-amber-200'">
+          [class]="activeTab() === 'store' ? 'btn btn-primary px-5 py-2 rounded-none font-extrabold shadow-sm' : 'btn btn-outline px-5 py-2 rounded-none font-bold bg-amber-50/40 hover:bg-amber-50 border-amber-200'">
           🛍️ المتاجر والتسوق
         </button>
         <button
           type="button"
           (click)="switchActivity('restaurant')"
-          [class]="activeTab() === 'restaurant' ? 'btn btn-primary px-6 py-2.5 rounded-2xl font-extrabold shadow-md' : 'btn btn-outline px-6 py-2.5 rounded-2xl font-bold bg-amber-50/40 hover:bg-amber-50 border-amber-200'">
+          [class]="activeTab() === 'restaurant' ? 'btn btn-primary px-5 py-2 rounded-none font-extrabold shadow-sm' : 'btn btn-outline px-5 py-2 rounded-none font-bold bg-amber-50/40 hover:bg-amber-50 border-amber-200'">
           🍔 المطاعم والكافيهات
         </button>
         @for (act of activities(); track act.id) {
@@ -34,7 +34,7 @@ import { ProductCardComponent } from '../../../../shared/components/product-card
             <button
               type="button"
               (click)="switchActivity(act.slug)"
-              [class]="activeTab() === act.slug ? 'btn btn-primary px-6 py-2.5 rounded-2xl font-extrabold shadow-md' : 'btn btn-outline px-6 py-2.5 rounded-2xl font-bold bg-amber-50/40 hover:bg-amber-50 border-amber-200'">
+              [class]="activeTab() === act.slug ? 'btn btn-primary px-5 py-2 rounded-none font-extrabold shadow-sm' : 'btn btn-outline px-5 py-2 rounded-none font-bold bg-amber-50/40 hover:bg-amber-50 border-amber-200'">
               ✨ {{ act.name }}
             </button>
           }
@@ -44,7 +44,7 @@ import { ProductCardComponent } from '../../../../shared/components/product-card
       <!-- Hero Banner Carousel -->
       @if (banners().length > 0) {
         <div
-          class="relative rounded-3xl overflow-hidden shadow-lg border border-amber-200/60 bg-gradient-to-r from-amber-700 via-amber-600 to-orange-600 text-white h-[280px] sm:h-[340px] md:h-[380px] group"
+          class="relative rounded-none overflow-hidden shadow-md border border-amber-200/60 bg-gradient-to-r from-amber-700 via-amber-600 to-orange-600 text-white h-[280px] sm:h-[340px] md:h-[380px] group"
           (mouseenter)="pauseAutoPlay()"
           (mouseleave)="startAutoPlay()">
           @for (banner of banners(); track banner.id; let i = $index) {
@@ -113,26 +113,26 @@ import { ProductCardComponent } from '../../../../shared/components/product-card
       }
 
       <!-- Categories Strip -->
-      <section class="bg-white rounded-3xl border border-amber-100/90 shadow-sm p-5 sm:p-7">
-        <div class="flex items-center justify-between gap-4 mb-5 pb-4 border-b border-amber-100/70">
-          <div class="flex items-center gap-3">
-            <span class="w-1.5 h-8 rounded-full bg-gradient-to-b from-amber-500 to-orange-600"></span>
+      <section class="bg-white rounded-none border border-amber-100/90 shadow-sm p-4">
+        <div class="flex items-center justify-between gap-3 mb-3 pb-2.5 border-b border-amber-100/70">
+          <div class="flex items-center gap-2.5">
+            <span class="w-1.5 h-7 bg-gradient-to-b from-amber-500 to-orange-600"></span>
             <div>
               <h3 class="text-lg sm:text-xl font-extrabold text-gray-900">الأقسام والتصنيفات</h3>
               <p class="text-xs text-gray-500">تصفح الأقسام المتوفرة واختر ما يناسبك</p>
             </div>
           </div>
-          <a routerLink="/categories" class="inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-amber-50 text-amber-800 text-xs sm:text-sm font-bold hover:bg-amber-100 transition">
+          <a routerLink="/categories" class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-none bg-amber-50 text-amber-800 text-xs sm:text-sm font-bold hover:bg-amber-100 transition">
             عرض الكل ←
           </a>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
           @for (cat of categories(); track cat.id) {
             <a
               [routerLink]="['/products']"
               [queryParams]="{ category: cat.slug, type: activeTab() }"
-              class="rounded-2xl border border-amber-100 bg-amber-50/20 p-4 text-center hover:bg-white hover:border-amber-400 hover:shadow-md transition group">
-              <div class="w-16 h-16 mx-auto mb-2.5 rounded-full bg-amber-100 overflow-hidden flex items-center justify-center text-amber-700 font-bold text-lg group-hover:scale-110 transition border border-amber-200">
+              class="rounded-none border border-amber-100 bg-amber-50/20 p-3 text-center hover:bg-white hover:border-amber-400 hover:shadow-md transition group">
+              <div class="w-16 h-16 mx-auto mb-2 rounded-full bg-amber-100 overflow-hidden flex items-center justify-center text-amber-700 font-bold text-lg group-hover:scale-110 transition border border-amber-200">
                 @if (cat.image || cat.image_url) {
                   <img [src]="cat.image || cat.image_url" [alt]="cat.name" class="w-full h-full object-cover" onerror="this.style.display='none'" />
                 } @else {
@@ -147,10 +147,10 @@ import { ProductCardComponent } from '../../../../shared/components/product-card
       </section>
 
       <!-- Stores / Restaurants Section -->
-      <section class="bg-white rounded-3xl border border-amber-100/90 shadow-sm p-5 sm:p-7">
-        <div class="flex items-center justify-between gap-4 mb-5 pb-4 border-b border-amber-100/70">
-          <div class="flex items-center gap-3">
-            <span class="w-1.5 h-8 rounded-full bg-gradient-to-b from-amber-500 to-orange-600"></span>
+      <section class="bg-white rounded-none border border-amber-100/90 shadow-sm p-4">
+        <div class="flex items-center justify-between gap-3 mb-3 pb-2.5 border-b border-amber-100/70">
+          <div class="flex items-center gap-2.5">
+            <span class="w-1.5 h-7 bg-gradient-to-b from-amber-500 to-orange-600"></span>
             <div>
               <h3 class="text-lg sm:text-xl font-extrabold text-gray-900">
                 {{ activeTab() === 'restaurant' ? 'أبرز المطاعم والكافيهات' : 'أبرز المتاجر المعتمدة' }}
@@ -160,15 +160,15 @@ import { ProductCardComponent } from '../../../../shared/components/product-card
               </p>
             </div>
           </div>
-          <a routerLink="/sellers" [queryParams]="{ type: activeTab() }" class="inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-amber-50 text-amber-800 text-xs sm:text-sm font-bold hover:bg-amber-100 transition">
+          <a routerLink="/sellers" [queryParams]="{ type: activeTab() }" class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-none bg-amber-50 text-amber-800 text-xs sm:text-sm font-bold hover:bg-amber-100 transition">
             عرض الكل ←
           </a>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5">
           @for (s of sellers(); track s.id) {
             <a
               [routerLink]="[s.type === 'restaurant' || s.type === 'restaurants' ? '/restaurant' : '/seller', s.id]"
-              class="card hover:shadow-xl transition overflow-hidden flex flex-col">
+              class="card rounded-none hover:shadow-xl transition overflow-hidden flex flex-col">
               <div class="h-32 bg-gradient-to-r from-amber-500 to-orange-500 relative">
                 @if (s.cover_image) {
                   <img [src]="s.cover_image" class="w-full h-full object-cover" onerror="this.style.display='none'" />
@@ -200,10 +200,10 @@ import { ProductCardComponent } from '../../../../shared/components/product-card
       </section>
 
       <!-- Products / Meals Grid -->
-      <section class="bg-white rounded-3xl border border-amber-100/90 shadow-sm p-5 sm:p-7">
-        <div class="flex items-center justify-between gap-4 mb-5 pb-4 border-b border-amber-100/70">
-          <div class="flex items-center gap-3">
-            <span class="w-1.5 h-8 rounded-full bg-gradient-to-b from-amber-500 to-orange-600"></span>
+      <section class="bg-white rounded-none border border-amber-100/90 shadow-sm p-4">
+        <div class="flex items-center justify-between gap-3 mb-3 pb-2.5 border-b border-amber-100/70">
+          <div class="flex items-center gap-2.5">
+            <span class="w-1.5 h-7 bg-gradient-to-b from-amber-500 to-orange-600"></span>
             <div>
               <h3 class="text-lg sm:text-xl font-extrabold text-gray-900">
                 {{ activeTab() === 'restaurant' ? 'أشهى الوجبات والأطباق' : 'أحدث المنتجات المختارة' }}
@@ -213,11 +213,11 @@ import { ProductCardComponent } from '../../../../shared/components/product-card
               </p>
             </div>
           </div>
-          <a routerLink="/products" [queryParams]="{ type: activeTab() }" class="inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-amber-50 text-amber-800 text-xs sm:text-sm font-bold hover:bg-amber-100 transition">
+          <a routerLink="/products" [queryParams]="{ type: activeTab() }" class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-none bg-amber-50 text-amber-800 text-xs sm:text-sm font-bold hover:bg-amber-100 transition">
             عرض الكل ←
           </a>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5">
           @for (prod of products(); track prod.id) {
             <app-product-card [product]="prod"></app-product-card>
           }
