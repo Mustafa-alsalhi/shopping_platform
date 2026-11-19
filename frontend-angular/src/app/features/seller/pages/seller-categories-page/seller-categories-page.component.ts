@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SellerService } from '../../../../core/services/seller.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { SellerCategoryModalComponent } from '../../components/modals/seller-category-modal.component';
 
 @Component({
   selector: 'app-seller-categories-page',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SellerCategoryModalComponent],
   template: `
     <div class="space-y-5">
       <div class="flex items-center justify-between">
@@ -43,22 +44,11 @@ import { ToastService } from '../../../../core/services/toast.service';
       </div>
 
       @if (showForm()) {
-        <div class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <form (ngSubmit)="save()" class="bg-white rounded-2xl p-6 w-full max-w-md space-y-4">
-            <div class="flex justify-between items-center border-b pb-2">
-              <h3 class="font-extrabold">{{ editing() ? 'تعديل القسم' : 'إضافة قسم جديد' }}</h3>
-              <button type="button" (click)="showForm.set(false)">✕</button>
-            </div>
-            <div><label class="text-xs font-bold block mb-1">اسم القسم *</label><input class="input" [(ngModel)]="m.name" name="name" required /></div>
-            <div><label class="text-xs font-bold block mb-1">الوصف</label><textarea class="input" rows="2" [(ngModel)]="m.description" name="description"></textarea></div>
-            <div><label class="text-xs font-bold block mb-1">الترتيب</label><input type="number" class="input" [(ngModel)]="m.sort_order" name="sort_order" /></div>
-            <label class="flex items-center gap-2 text-sm font-bold"><input type="checkbox" [(ngModel)]="m.is_active" name="is_active" /> مفعّل</label>
-            <div class="flex gap-3 pt-2">
-              <button class="btn btn-primary">حفظ</button>
-              <button type="button" (click)="showForm.set(false)" class="btn btn-outline">إلغاء</button>
-            </div>
-          </form>
-        </div>
+        <app-seller-category-modal
+          [isEditing]="!!editing()"
+          [model]="m"
+          (saved)="save()"
+          (closed)="showForm.set(false)" />
       }
     </div>
   `

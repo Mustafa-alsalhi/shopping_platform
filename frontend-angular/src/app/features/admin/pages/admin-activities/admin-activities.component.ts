@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../../core/services/admin.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { environment } from '../../../../../environments/environment';
+import { AdminActivityModalComponent } from '../../components/modals/admin-activity-modal.component';
 
 @Component({
   selector: 'app-admin-activities',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminActivityModalComponent],
   template: `
     <div class="space-y-5">
       <div class="flex items-center justify-between">
@@ -46,75 +47,24 @@ import { environment } from '../../../../../environments/environment';
       </div>
 
       @if (showForm()) {
-        <div class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <form (ngSubmit)="save()" class="bg-white rounded-2xl p-6 w-full max-w-lg space-y-4">
-            <div class="flex justify-between items-center border-b pb-2">
-              <h3 class="font-extrabold">{{ editing() ? 'تعديل النشاط' : 'إضافة نشاط جديد' }}</h3>
-              <button type="button" (click)="showForm.set(false)">✕</button>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="text-xs font-bold block mb-1">اسم النشاط *</label><input class="input" [(ngModel)]="m.name" name="name" required /></div>
-              <div><label class="text-xs font-bold block mb-1">المعرف (Slug)</label><input class="input" [(ngModel)]="m.slug" name="slug" placeholder="مثال: pharmacy" /></div>
-            </div>
-            <div>
-              <label class="text-xs font-bold block mb-1">الأيقونة</label>
-              <div class="flex gap-2 items-center">
-                <input class="input w-24 text-center text-xl" [(ngModel)]="m.icon" name="icon" />
-                <div class="flex flex-wrap gap-1">
-                  @for (ic of iconPresets; track ic) {
-                    <button type="button" (click)="m.icon = ic" class="px-2 py-1 rounded border hover:bg-amber-50">{{ ic }}</button>
-                  }
-                </div>
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="text-xs font-bold block mb-1">لون الواجهة</label>
-                <div class="flex gap-2 items-center">
-                  <input type="color" [(ngModel)]="m.theme_color" name="theme_color" class="w-10 h-9 rounded border cursor-pointer" />
-                  <input class="input text-xs" [(ngModel)]="m.theme_color" name="theme_color_hex" />
-                </div>
-              </div>
-              <div><label class="text-xs font-bold block mb-1">الترتيب</label><input type="number" class="input" [(ngModel)]="m.sort_order" name="sort_order" /></div>
-            </div>
-            <div><label class="text-xs font-bold block mb-1">الوصف</label><textarea class="input" rows="2" [(ngModel)]="m.description" name="description"></textarea></div>
-            <label class="flex items-center gap-2 text-sm font-bold"><input type="checkbox" [(ngModel)]="m.is_active" name="is_active" /> نشاط مفعّل</label>
-            <div class="flex gap-3 pt-2">
-              <button class="btn btn-primary">حفظ</button>
-              <button type="button" (click)="showForm.set(false)" class="btn btn-outline">إلغاء</button>
-            </div>
-          </form>
-        </div>
+        <app-admin-activity-modal [editing]="editing()" (close)="showForm.set(false)" (saved)="showForm.set(false); load()" />
       }
     </div>
   `
 })
 export class AdminActivitiesComponent implements OnInit {
   private readonly admin = inject(AdminService);
-  private readonly toast = inject(ToastService);
 
   readonly activities = signal<any[]>([]);
   readonly showForm = signal(false);
   readonly editing = signal<any>(null);
-  iconPresets = ['🛍️', '🍔', '💊', '🛒', '💐', '📱', '☕', '🎁', '🍰', '🐾'];
-  m: any = {};
 
   ngOnInit(): void { this.load(); }
   load() { this.admin.getActivities().subscribe({ next: (r) => this.activities.set(Array.isArray(r) ? r : r?.data || []) }); }
 
   openForm(row: any | null) {
     this.editing.set(row);
-    this.m = row ? { ...row } : { name: '', slug: '', icon: '🛍️', description: '', sort_order: 0, theme_color: '#d97706', is_active: true };
     this.showForm.set(true);
-  }
-
-  save() {
-    const row = this.editing();
-    const req = row ? this.admin.updateActivity(row.id, this.m) : this.admin.createActivity(this.m);
-    req.subscribe({
-      next: () => { this.toast.success('تم الحفظ'); this.showForm.set(false); this.load(); },
-      error: (e) => this.toast.error(e.error?.message || 'تعذر الحفظ')
-    });
   }
 
   toggle(a: any) { this.admin.toggleActivity(a.id).subscribe({ next: () => this.load() }); }

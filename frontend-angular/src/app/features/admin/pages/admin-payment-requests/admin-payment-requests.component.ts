@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../../core/services/admin.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { resolveAdminImg } from '../../../../shared/utils/image.utils';
+import { AdminPaymentRequestModalComponent } from '../../components/modals/admin-payment-request-modal.component';
 
 @Component({
   selector: 'app-admin-payment-requests',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminPaymentRequestModalComponent],
   template: `
     <div class="space-y-5">
       <div class="flex flex-wrap items-center justify-between gap-3">
@@ -67,52 +68,23 @@ import { resolveAdminImg } from '../../../../shared/utils/image.utils';
         </table>
       </div>
 
-      @if (reviewing(); as rev) {
-        <div class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div class="bg-white rounded-2xl p-6 w-full max-w-lg space-y-4">
-            <div class="flex justify-between items-center border-b pb-2">
-              <h3 class="font-extrabold">مراجعة طلب الدفع #{{ rev.order?.order_number || rev.order_id }}</h3>
-              <button (click)="reviewing.set(null)">✕</button>
-            </div>
-            <div class="text-sm space-y-1 bg-amber-50/50 p-3 rounded-xl">
-              <p><b>المرسل:</b> {{ rev.payer_name }}</p>
-              <p><b>المبلغ:</b> {{ rev.payment_amount | number:'1.0-2' }}</p>
-              <p><b>المرجع:</b> {{ rev.reference_number || '—' }}</p>
-            </div>
-            @if (rev.receipt_image || rev.payment_proof) {
-              <img [src]="img(rev.receipt_image || rev.payment_proof)" class="max-h-56 mx-auto rounded-xl border" />
-            }
-            <div>
-              <label class="text-xs font-bold block mb-1">ملاحظات الإدارة</label>
-              <textarea class="input" rows="2" [(ngModel)]="adminNotes" placeholder="سبب القبول أو الرفض..."></textarea>
-            </div>
-            <div class="flex gap-2">
-              <button (click)="decide('approved')" class="btn btn-success text-xs">اعتماد الدفع</button>
-              <button (click)="decide('rejected')" class="btn btn-error text-xs">رفض</button>
-              <button (click)="reviewing.set(null)" class="btn btn-outline text-xs">إغلاق</button>
-            </div>
-          </div>
-        </div>
-      }
-
-      @if (previewUrl()) {
-        <div class="fixed inset-0 z-50 bg-black/75 flex items-center justify-center p-4" (click)="previewUrl.set('')">
-          <img [src]="previewUrl()" class="max-h-[85vh] max-w-full rounded-2xl shadow-2xl" />
-        </div>
-      }
+      <app-admin-payment-request-modal
+        [reviewing]="reviewing()"
+        [previewUrl]="previewUrl()"
+        (close)="reviewing.set(null)"
+        (saved)="reviewing.set(null); load()"
+        (closePreview)="previewUrl.set('')" />
     </div>
   `
 })
 export class AdminPaymentRequestsComponent implements OnInit {
   private readonly admin = inject(AdminService);
-  private readonly toast = inject(ToastService);
 
   readonly requests = signal<any[]>([]);
   readonly stats = signal<any>(null);
   readonly reviewing = signal<any>(null);
   readonly previewUrl = signal('');
   statusFilter = '';
-  adminNotes = '';
   img = resolveAdminImg;
 
   ngOnInit(): void { this.load(); }
@@ -122,15 +94,7 @@ export class AdminPaymentRequestsComponent implements OnInit {
     this.admin.getPaymentRequestStats().subscribe({ next: (r) => this.stats.set(r?.data || r) });
   }
 
-  openReview(r: any) { this.reviewing.set(r); this.adminNotes = r.admin_notes || ''; }
-
-  decide(status: string) {
-    const rev = this.reviewing();
-    if (!rev) return;
-    this.admin.updatePaymentRequest(rev.id, status, this.adminNotes).subscribe({
-      next: () => { this.toast.success('تم تحديث الطلب'); this.reviewing.set(null); this.load(); }
-    });
-  }
+  openReview(r: any) { this.reviewing.set(r); }
 
   remove(r: any) { if (confirm('حذف سجل الطلب؟')) this.admin.deletePaymentRequest(r.id).subscribe({ next: () => this.load() }); }
 }

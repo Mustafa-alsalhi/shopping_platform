@@ -2,11 +2,12 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SellerService } from '../../../../core/services/seller.service';
 import { resolveAdminImg } from '../../../../shared/utils/image.utils';
+import { SellerPaymentRequestModalComponent } from '../../components/modals/seller-payment-request-modal.component';
 
 @Component({
   selector: 'app-seller-payment-requests',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SellerPaymentRequestModalComponent],
   template: `
     <div class="space-y-5">
       <div>
@@ -45,9 +46,7 @@ import { resolveAdminImg } from '../../../../shared/utils/image.utils';
       </div>
 
       @if (previewUrl()) {
-        <div class="fixed inset-0 z-50 bg-black/75 flex items-center justify-center p-4" (click)="previewUrl.set('')">
-          <img [src]="previewUrl()" class="max-h-[85vh] max-w-full rounded-2xl shadow-2xl" />
-        </div>
+        <app-seller-payment-request-modal [previewUrl]="previewUrl()" (closed)="previewUrl.set('')" />
       }
     </div>
   `

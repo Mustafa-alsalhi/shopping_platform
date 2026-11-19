@@ -5,11 +5,12 @@ import { SellerService } from '../../../../core/services/seller.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { ORDER_STATUS_LABELS } from '../../../../shared/constants/order-status';
 import { resolveAdminImg } from '../../../../shared/utils/image.utils';
+import { SellerOrderDetailModalComponent } from '../../components/modals/seller-order-detail-modal.component';
 
 @Component({
   selector: 'app-seller-orders',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SellerOrderDetailModalComponent],
   template: `
     <div class="space-y-5">
       <div class="flex flex-wrap items-center justify-between gap-3">
@@ -61,31 +62,7 @@ import { resolveAdminImg } from '../../../../shared/utils/image.utils';
       } @empty { <div class="card p-10 text-center text-gray-500">لا توجد طلبات.</div> }
 
       @if (details(); as ord) {
-        <div class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div class="bg-white rounded-2xl p-6 w-full max-w-xl max-h-[88vh] overflow-y-auto space-y-4">
-            <div class="flex justify-between items-center border-b pb-2">
-              <h3 class="font-extrabold">تفاصيل الطلب #{{ ord.order_number }}</h3>
-              <button (click)="details.set(null)">✕</button>
-            </div>
-            <div class="text-sm bg-amber-50/50 p-3 rounded-xl space-y-1">
-              <p><b>العميل:</b> {{ ord.user?.name }} — {{ ord.user?.phone }}</p>
-              <p><b>العنوان:</b> {{ ord.shipping_address || ord.address }}</p>
-              <p><b>الدفع:</b> {{ ord.payment_method || '—' }}</p>
-            </div>
-            <div class="space-y-2">
-              @for (it of ord.items; track it.id) {
-                <div class="flex items-center justify-between p-2 border rounded-xl text-sm">
-                  <div class="flex items-center gap-2.5">
-                    @if (it.product?.image) { <img [src]="img(it.product.image)" class="w-10 h-10 rounded object-cover border" /> }
-                    <div><p class="font-bold">{{ it.product?.name || it.product_name }}</p><p class="text-xs text-gray-500">{{ it.quantity }} × {{ it.price | number:'1.0-2' }}</p></div>
-                  </div>
-                  <span class="font-bold">{{ it.total | number:'1.0-2' }}</span>
-                </div>
-              }
-            </div>
-            <div class="flex justify-between font-extrabold border-t pt-2"><span>الإجمالي:</span><span class="text-amber-700">{{ ord.total | number:'1.0-2' }}</span></div>
-          </div>
-        </div>
+        <app-seller-order-detail-modal [order]="ord" (closed)="details.set(null)" />
       }
     </div>
   `

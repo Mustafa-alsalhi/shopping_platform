@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../../core/services/admin.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { resolveAdminImg } from '../../../../shared/utils/image.utils';
+import { AdminContactUsModalComponent } from '../../components/modals/admin-contact-us-modal.component';
 
 @Component({
   selector: 'app-admin-contact-us',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminContactUsModalComponent],
   template: `
     <div class="space-y-5">
       <div class="flex flex-wrap items-center justify-between gap-3">
@@ -63,32 +64,18 @@ import { resolveAdminImg } from '../../../../shared/utils/image.utils';
       </div>
 
       @if (replyRow(); as r) {
-        <div class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div class="bg-white rounded-2xl p-6 w-full max-w-lg space-y-3">
-            <div class="flex justify-between items-center border-b pb-2"><h3 class="font-extrabold">{{ r.subject }}</h3><button (click)="replyRow.set(null)">✕</button></div>
-            <p class="text-xs text-gray-500">{{ r.name }} — {{ r.email }} — {{ r.phone }}</p>
-            <p class="text-sm bg-amber-50 rounded-xl p-3 whitespace-pre-line">{{ r.message }}</p>
-            <textarea class="input" rows="3" [(ngModel)]="replyText" placeholder="اكتب ردك للعميل..."></textarea>
-            <div class="flex flex-wrap gap-2">
-              <button (click)="sendReply('replied')" class="btn btn-primary text-xs">إرسال الرد</button>
-              <button (click)="sendReply('read')" class="btn btn-outline text-xs">تعليم كمقروء</button>
-              <button (click)="sendReply('closed')" class="btn btn-outline text-xs">إغلاق</button>
-            </div>
-          </div>
-        </div>
+        <app-admin-contact-us-modal [message]="r" (close)="replyRow.set(null)" (saved)="replyRow.set(null); load()" />
       }
     </div>
   `
 })
 export class AdminContactUsComponent implements OnInit {
   private readonly admin = inject(AdminService);
-  private readonly toast = inject(ToastService);
 
   readonly messages = signal<any[]>([]);
   readonly stats = signal<any>(null);
   readonly replyRow = signal<any>(null);
   statusFilter = '';
-  replyText = '';
 
   ngOnInit(): void { this.load(); }
 
@@ -101,15 +88,7 @@ export class AdminContactUsComponent implements OnInit {
     this.admin.getContactStats().subscribe({ next: (r) => this.stats.set(r?.data || r) });
   }
 
-  openReply(row: any) { this.replyRow.set(row); this.replyText = row.admin_reply || ''; }
-
-  sendReply(status: string) {
-    const r = this.replyRow();
-    if (!r) return;
-    this.admin.replyContactMessage(r.id, status, this.replyText).subscribe({
-      next: () => { this.toast.success('تم تحديث الرسالة'); this.replyRow.set(null); this.load(); }
-    });
-  }
+  openReply(row: any) { this.replyRow.set(row); }
 
   remove(m: any) { if (confirm('حذف الرسالة؟')) this.admin.deleteContactMessage(m.id).subscribe({ next: () => this.load() }); }
 }

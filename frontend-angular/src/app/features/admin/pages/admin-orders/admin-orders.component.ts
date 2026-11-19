@@ -8,11 +8,13 @@ import { ToastService } from '../../../../core/services/toast.service';
 import { environment } from '../../../../../environments/environment';
 import { ORDER_STATUS_LABELS } from '../../../../shared/constants/order-status';
 import { resolveAdminImg } from '../../../../shared/utils/image.utils';
+import { AdminOrderModalComponent } from '../../components/modals/admin-order-modal.component';
+import { AdminOrderAssignModalComponent } from '../../components/modals/admin-order-assign-modal.component';
 
 @Component({
   selector: 'app-admin-orders',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminOrderModalComponent, AdminOrderAssignModalComponent],
   template: `
     <div class="space-y-4">
       <div class="flex flex-wrap items-center justify-between gap-3">
@@ -66,70 +68,12 @@ import { resolveAdminImg } from '../../../../shared/utils/image.utils';
 
       <!-- Order Details Modal -->
       @if (detailsOrder(); as ord) {
-        <div class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div class="bg-white rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto space-y-4">
-            <div class="flex justify-between items-center border-b pb-2">
-              <h3 class="font-extrabold text-lg">تفاصيل الطلب #{{ ord.order_number }}</h3>
-              <button (click)="detailsOrder.set(null)">✕</button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm bg-amber-50/50 p-4 rounded-xl">
-              <div>
-                <p class="text-xs text-gray-500">العميل</p>
-                <p class="font-bold">{{ ord.user?.name }} — {{ ord.user?.phone }}</p>
-                <p class="text-xs text-gray-600">{{ ord.shipping_address || ord.address }}</p>
-              </div>
-              <div>
-                <p class="text-xs text-gray-500">الدفع والحالة</p>
-                <p class="font-bold">{{ ord.payment_method }} • {{ label(ord.status) }}</p>
-                <p class="text-xs text-gray-600">المندوب: {{ ord.driver?.name || 'غير مسند' }}</p>
-              </div>
-            </div>
-            <div class="space-y-2">
-              <h4 class="font-extrabold text-sm">المنتجات</h4>
-              @for (it of ord.items || ord.order_items || []; track it.id) {
-                <div class="flex items-center justify-between p-2.5 border rounded-xl text-sm">
-                  <div class="flex items-center gap-3">
-                    @if (it.product?.image) { <img [src]="img(it.product.image)" class="w-10 h-10 rounded object-cover border" /> }
-                    <div>
-                      <p class="font-bold">{{ it.product?.name || it.product_name }}</p>
-                      <p class="text-xs text-gray-500">الكمية: {{ it.quantity }} × {{ it.price | number:'1.0-2' }}</p>
-                    </div>
-                  </div>
-                  <span class="font-bold">{{ (it.total ?? it.quantity * it.price) | number:'1.0-2' }}</span>
-                </div>
-              }
-            </div>
-            <div class="border-t pt-3 text-sm space-y-1">
-              <div class="flex justify-between"><span>المجموع الفرعي:</span><span>{{ ord.subtotal | number:'1.0-2' }}</span></div>
-              <div class="flex justify-between"><span>التوصيل:</span><span>{{ ord.shipping_cost | number:'1.0-2' }}</span></div>
-              <div class="flex justify-between"><span>الضريبة:</span><span>{{ ord.tax_amount | number:'1.0-2' }}</span></div>
-              @if (ord.discount_amount) { <div class="flex justify-between text-emerald-700"><span>الخصم:</span><span>-{{ ord.discount_amount | number:'1.0-2' }}</span></div> }
-              <div class="flex justify-between font-extrabold text-base border-t pt-2"><span>الإجمالي:</span><span class="text-amber-700">{{ ord.total | number:'1.0-2' }}</span></div>
-            </div>
-          </div>
-        </div>
+        <app-admin-order-modal [order]="ord" (close)="detailsOrder.set(null)" />
       }
 
       <!-- Smart Driver Dispatch Modal -->
-      @if (assignOrder()) {
-        <div class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div class="bg-white rounded-2xl p-6 w-full max-w-2xl max-h-[85vh] overflow-y-auto space-y-3">
-            <div class="flex justify-between"><h3 class="font-extrabold">اختيار مندوب للطلب #{{ assignOrder().order_number }}</h3><button (click)="assignOrder.set(null)">✕</button></div>
-            @for (d of smart(); track d.id) {
-              <div class="p-3 border rounded-xl flex items-center justify-between">
-                <div>
-                  <p class="font-bold">{{ d.name }} <span class="text-xs text-gray-500">{{ d.phone }}</span></p>
-                  <p class="text-xs">
-                    <span class="badge" [class]="d.smart_status === 'available' ? 'bg-emerald-100 text-emerald-800' : d.smart_status === 'busy' ? 'bg-amber-100 text-amber-800' : 'bg-gray-200 text-gray-600'">
-                      {{ d.smart_status === 'available' ? 'متاح' : d.smart_status === 'busy' ? 'مشغول' : 'غير متصل' }}</span>
-                    طلبات نشطة: {{ d.active_orders_count }} @if (d.distance_km !== null) { — {{ d.distance_km }} كم }
-                  </p>
-                </div>
-                <button (click)="assign(d.id)" class="btn btn-success text-xs">إسناد</button>
-              </div>
-            } @empty { <p class="text-center text-gray-500">لا يوجد مندوبون.</p> }
-          </div>
-        </div>
+      @if (assignOrder(); as ord) {
+        <app-admin-order-assign-modal [order]="ord" (close)="assignOrder.set(null)" (assigned)="assignOrder.set(null); load()" />
       }
     </div>
   `
@@ -140,11 +84,9 @@ export class AdminOrdersComponent implements OnInit {
   readonly orders = signal<any[]>([]);
   readonly detailsOrder = signal<any>(null);
   readonly assignOrder = signal<any>(null);
-  readonly smart = signal<any[]>([]);
   filter = '';
   search = '';
   statuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
-  img = resolveAdminImg;
 
   readonly filtered = computed(() => {
     const q = this.search.trim().toLowerCase();
@@ -164,12 +106,5 @@ export class AdminOrdersComponent implements OnInit {
   remove(id: number) { if (confirm('حذف الطلب نهائياً؟')) this.admin.deleteOrder(id).subscribe(() => this.load()); }
   openAssign(o: any) {
     this.assignOrder.set(o);
-    this.admin.getSmartDrivers(o.id).subscribe({ next: (r) => this.smart.set(r?.data || []) });
-  }
-  assign(driverId: number) {
-    this.admin.assignDriver(this.assignOrder().id, driverId).subscribe({
-      next: () => { this.toast.success('تم إسناد المندوب'); this.assignOrder.set(null); this.load(); },
-      error: (e) => this.toast.error(e.error?.message || 'تعذر الإسناد')
-    });
   }
 }

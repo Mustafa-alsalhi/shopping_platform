@@ -2,13 +2,12 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../../core/services/admin.service';
-import { ToastService } from '../../../../core/services/toast.service';
-import { resolveAdminImg } from '../../../../shared/utils/image.utils';
+import { AdminTaxModalComponent } from '../../components/modals/admin-tax-modal.component';
 
 @Component({
   selector: 'app-admin-taxes',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminTaxModalComponent],
   template: `
     <div class="space-y-5">
       <div class="flex items-center justify-between">
@@ -45,59 +44,23 @@ import { resolveAdminImg } from '../../../../shared/utils/image.utils';
       </div>
 
       @if (showForm()) {
-        <div class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <form (ngSubmit)="save()" class="bg-white rounded-2xl p-6 w-full max-w-md space-y-4">
-            <div class="flex justify-between items-center border-b pb-2">
-              <h3 class="font-extrabold">{{ editing() ? 'تعديل الضريبة' : 'إضافة ضريبة' }}</h3>
-              <button type="button" (click)="showForm.set(false)">✕</button>
-            </div>
-            <div><label class="text-xs font-bold block mb-1">الاسم *</label><input class="input" [(ngModel)]="m.name" name="name" required /></div>
-            <div><label class="text-xs font-bold block mb-1">الوصف</label><input class="input" [(ngModel)]="m.description" name="description" /></div>
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="text-xs font-bold block mb-1">القيمة *</label><input type="number" step="0.01" class="input" [(ngModel)]="m.rate" name="rate" required /></div>
-              <div>
-                <label class="text-xs font-bold block mb-1">النوع</label>
-                <select class="input" [(ngModel)]="m.type" name="type"><option value="percentage">نسبة %</option><option value="fixed">ثابتة</option></select>
-              </div>
-            </div>
-            <div class="flex gap-6 text-sm font-bold">
-              <label class="flex items-center gap-2"><input type="checkbox" [(ngModel)]="m.is_default" name="is_default" /> افتراضية</label>
-              <label class="flex items-center gap-2"><input type="checkbox" [(ngModel)]="m.is_active" name="is_active" /> مفعّلة</label>
-            </div>
-            <div class="flex gap-3 pt-2">
-              <button class="btn btn-primary">حفظ</button>
-              <button type="button" (click)="showForm.set(false)" class="btn btn-outline">إلغاء</button>
-            </div>
-          </form>
-        </div>
+        <app-admin-tax-modal [editing]="editing()" (close)="showForm.set(false)" (saved)="showForm.set(false); load()" />
       }
     </div>
   `
 })
 export class AdminTaxesComponent implements OnInit {
   private readonly admin = inject(AdminService);
-  private readonly toast = inject(ToastService);
   readonly taxes = signal<any[]>([]);
   readonly showForm = signal(false);
   readonly editing = signal<any>(null);
-  m: any = {};
 
   ngOnInit(): void { this.load(); }
   load() { this.admin.getTaxes().subscribe({ next: (r) => this.taxes.set(r || []) }); }
 
   openForm(row: any | null) {
     this.editing.set(row);
-    this.m = row ? { ...row } : { name: '', description: '', rate: 15, type: 'percentage', is_default: false, is_active: true };
     this.showForm.set(true);
-  }
-
-  save() {
-    const row = this.editing();
-    const req = row ? this.admin.updateTax(row.id, this.m) : this.admin.createTax(this.m);
-    req.subscribe({
-      next: () => { this.toast.success('تم الحفظ'); this.showForm.set(false); this.load(); },
-      error: (e) => this.toast.error(e.error?.message || 'تعذر الحفظ')
-    });
   }
 
   remove(t: any) { if (confirm(`حذف "${t.name}"؟`)) this.admin.deleteTax(t.id).subscribe({ next: () => this.load() }); }
