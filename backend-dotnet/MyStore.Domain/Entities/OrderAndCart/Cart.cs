@@ -36,7 +36,7 @@ public class Cart
     public string? Sku { get; set; }
 
     [Column("weight")]
-    public string? Weight { get; set; }
+    public decimal? Weight { get; set; }
 
     [Column("dimensions")]
     public string? Dimensions { get; set; }

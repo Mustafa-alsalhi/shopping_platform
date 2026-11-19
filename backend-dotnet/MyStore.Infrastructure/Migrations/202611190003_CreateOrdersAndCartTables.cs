@@ -32,8 +32,7 @@ namespace MyStore.Infrastructure.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     sku = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    weight = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    weight = table.Column<decimal>(type: "decimal(8,2)", precision: 8, scale: 2, nullable: true),
                     dimensions = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     category = table.Column<string>(type: "longtext", nullable: true)

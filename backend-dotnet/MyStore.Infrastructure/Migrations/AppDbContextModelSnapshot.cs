@@ -413,8 +413,9 @@ namespace MyStore.Infrastructure.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("variant_value");
 
-                    b.Property<string>("Weight")
-                        .HasColumnType("longtext")
+                    b.Property<decimal?>("Weight")
+                        .HasPrecision(8, 2)
+                        .HasColumnType("decimal(8,2)")
                         .HasColumnName("weight");
 
                     b.HasKey("Id");
@@ -2472,8 +2473,9 @@ namespace MyStore.Infrastructure.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("variant_attributes");
 
-                    b.Property<string>("Weight")
-                        .HasColumnType("longtext")
+                    b.Property<decimal?>("Weight")
+                        .HasPrecision(8, 2)
+                        .HasColumnType("decimal(8,2)")
                         .HasColumnName("weight");
 
                     b.HasKey("Id");
