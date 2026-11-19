@@ -19,7 +19,7 @@ import * as L from 'leaflet';
           </button>
         }
       </div>
-      <div #mapContainer class="w-full h-64 rounded-xl border border-amber-300 shadow-inner z-10"></div>
+      <div #mapContainer class="w-full h-72 sm:h-80 rounded-xl border border-amber-300 shadow-inner z-10 bg-amber-50"></div>
       @if (latitude && longitude) {
         <p class="text-xs text-gray-500">
           الإحداثيات: {{ latitude | number:'1.5-5' }}, {{ longitude | number:'1.5-5' }}
@@ -45,10 +45,38 @@ export class LocationPickerComponent implements AfterViewInit, OnChanges {
     const lat = this.latitude || 15.3694;
     const lng = this.longitude || 44.1910;
 
-    this.map = L.map(this.mapContainer.nativeElement).setView([lat, lng], 13);
+    this.map = L.map(this.mapContainer.nativeElement).setView([lat, lng], 14);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
+    const cartoLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap © CARTO',
+      subdomains: 'abcd',
+      maxZoom: 20
+    });
+
+    const esriStreetLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '© Esri',
+      maxZoom: 19
+    });
+
+    const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19
+    });
+
+    let switchedFallback = false;
+    cartoLayer.on('tileerror', () => {
+      if (!switchedFallback && this.map) {
+        switchedFallback = true;
+        this.map.removeLayer(cartoLayer);
+        esriStreetLayer.addTo(this.map);
+      }
+    });
+
+    cartoLayer.addTo(this.map);
+    L.control.layers({
+      'خريطة الشوارع': cartoLayer,
+      'خريطة بديلة (Esri)': esriStreetLayer,
+      'OpenStreetMap': osmLayer
     }).addTo(this.map);
 
     const icon = L.icon({
