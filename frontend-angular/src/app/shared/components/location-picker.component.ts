@@ -70,6 +70,8 @@ export class LocationPickerComponent implements AfterViewInit, OnChanges {
         this.setCoordinates(pos.lat, pos.lng);
       });
     }
+
+    setTimeout(() => this.map?.invalidateSize(), 200);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
