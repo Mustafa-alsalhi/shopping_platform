@@ -1,16 +1,30 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { SellerService } from '../../core/services/seller.service';
 import { resolveAdminImg } from '../utils/image.utils';
+
+interface SellerNavItem {
+  path: string;
+  label: string;
+  icon: string;
+}
+
+interface SellerNavGroup {
+  key: string;
+  title: string;
+  icon: string;
+  items: SellerNavItem[];
+}
 
 @Component({
   selector: 'app-seller-layout',
   standalone: true,
   imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   template: `
-    <div class="min-h-screen flex bg-gray-100">
+    <div class="min-h-screen flex bg-gray-100" dir="rtl">
       <!-- Mobile overlay -->
       @if (mobileOpen()) {
         <div class="fixed inset-0 z-40 bg-black/50 lg:hidden" (click)="mobileOpen.set(false)"></div>
@@ -18,7 +32,7 @@ import { resolveAdminImg } from '../utils/image.utils';
 
       <!-- Sidebar -->
       <aside
-        class="fixed lg:static inset-y-0 right-0 z-50 w-64 bg-slate-900 text-slate-200 flex flex-col shrink-0 transition-transform duration-200 lg:translate-x-0"
+        class="fixed lg:static inset-y-0 right-0 z-50 w-72 bg-slate-900 text-slate-200 flex flex-col shrink-0 shadow-xl transition-transform duration-200 lg:translate-x-0"
         [class.translate-x-full]="!mobileOpen()"
         [class.translate-x-0]="mobileOpen()">
         <div class="p-4 border-b border-slate-800 flex items-center justify-between gap-2">
@@ -33,19 +47,61 @@ import { resolveAdminImg } from '../utils/image.utils';
               <p class="text-[11px] text-slate-400">{{ store()?.type === 'restaurant' ? 'بوابة المطعم' : 'بوابة المتجر' }}</p>
             </div>
           </a>
-          <a routerLink="/" title="العودة للمتجر" class="text-xs text-slate-400 hover:text-white shrink-0">المتجر ↗</a>
+          <a routerLink="/" title="العودة للمتجر" class="text-xs px-2.5 py-1 rounded bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition shrink-0">المتجر ↗</a>
         </div>
 
-        <nav class="flex-1 overflow-y-auto p-3 space-y-1 text-sm">
-          @for (item of menuItems; track item.path) {
-            <a
-              [routerLink]="item.path"
-              routerLinkActive="bg-amber-600 text-white font-bold"
-              (click)="mobileOpen.set(false)"
-              class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 transition">
-              <span>{{ item.icon }}</span>
-              <span>{{ item.label }}</span>
-            </a>
+        <nav class="flex-1 overflow-y-auto p-3 space-y-1.5 text-sm">
+          <!-- Direct Dashboard Link -->
+          <a
+            routerLink="/seller/dashboard"
+            routerLinkActive="bg-amber-600 text-white font-bold shadow-md"
+            (click)="mobileOpen.set(false)"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 transition">
+            <span>📊</span>
+            <span>لوحة التحكم</span>
+          </a>
+
+          <!-- Grouped Accordion Sections -->
+          @for (group of menuGroups; track group.key) {
+            <div class="pt-1">
+              <button
+                type="button"
+                (click)="toggleGroup(group.key)"
+                class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition text-right font-bold hover:bg-slate-800/80"
+                [class.bg-slate-800]="isGroupActive(group) || isGroupOpen(group.key)"
+                [class.text-amber-400]="isGroupActive(group)"
+                [class.text-slate-300]="!isGroupActive(group)">
+                <span class="flex items-center gap-2.5">
+                  <span>{{ group.icon }}</span>
+                  <span>{{ group.title }}</span>
+                </span>
+                <svg
+                  class="w-4 h-4 transition-transform duration-200 shrink-0"
+                  [class.rotate-180]="isGroupOpen(group.key)"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2.2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              @if (isGroupOpen(group.key)) {
+                <div class="mt-1 mr-3 pr-2.5 border-r-2 border-slate-700/80 space-y-1">
+                  @for (item of group.items; track item.path) {
+                    <a
+                      [routerLink]="item.path"
+                      routerLinkActive="bg-amber-600 text-white font-bold shadow-sm"
+                      [routerLinkActiveOptions]="{ exact: item.path === '/seller/products' }"
+                      (click)="mobileOpen.set(false)"
+                      class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs sm:text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                      <span>{{ item.icon }}</span>
+                      <span>{{ item.label }}</span>
+                    </a>
+                  }
+                </div>
+              }
+            </div>
           }
         </nav>
 
@@ -108,6 +164,7 @@ import { resolveAdminImg } from '../utils/image.utils';
 export class SellerLayoutComponent implements OnInit {
   readonly auth = inject(AuthService);
   private readonly seller = inject(SellerService);
+  private readonly router = inject(Router);
 
   readonly store = signal<any>(null);
   readonly notifications = signal<any[]>([]);
@@ -116,22 +173,81 @@ export class SellerLayoutComponent implements OnInit {
   readonly notifOpen = signal(false);
   img = resolveAdminImg;
 
-  readonly menuItems = [
-    { path: '/seller/dashboard', label: 'لوحة التحكم', icon: '📊' },
-    { path: '/seller/orders', label: 'الطلبات الواردة', icon: '📦' },
-    { path: '/seller/products', label: 'المنتجات / الوجبات', icon: '🛍️' },
-    { path: '/seller/categories', label: 'أقسام المتجر الخاصة', icon: '🗂️' },
-    { path: '/seller/offers', label: 'العروض والتخفيضات', icon: '🔥' },
-    { path: '/seller/coupons', label: 'كوبونات المتجر', icon: '🎟️' },
-    { path: '/seller/reports', label: 'التقارير والأرباح', icon: '📈' },
-    { path: '/seller/payment-requests', label: 'عمليات الدفع', icon: '💳' },
-    { path: '/seller/chat', label: 'رسائل العملاء', icon: '💬' },
-    { path: '/seller/settings', label: 'إعدادات المتجر والموقع', icon: '⚙️' }
+  readonly openGroups = signal<Record<string, boolean>>({
+    catalog: true,
+    sales: false,
+    marketing: false,
+    store: false
+  });
+
+  readonly menuGroups: SellerNavGroup[] = [
+    {
+      key: 'catalog',
+      title: 'المنتجات والأقسام',
+      icon: '🛍️',
+      items: [
+        { path: '/seller/products', label: 'المنتجات / الوجبات', icon: '📦' },
+        { path: '/seller/products/new', label: 'إضافة منتج جديد', icon: '➕' },
+        { path: '/seller/categories', label: 'أقسام المتجر الخاصة', icon: '🗂️' }
+      ]
+    },
+    {
+      key: 'sales',
+      title: 'المبيعات والمالية',
+      icon: '💰',
+      items: [
+        { path: '/seller/orders', label: 'الطلبات الواردة', icon: '🧾' },
+        { path: '/seller/payment-requests', label: 'عمليات الدفع', icon: '💳' },
+        { path: '/seller/reports', label: 'التقارير والأرباح', icon: '📈' }
+      ]
+    },
+    {
+      key: 'marketing',
+      title: 'التسويق والعروض',
+      icon: '📣',
+      items: [
+        { path: '/seller/offers', label: 'العروض والتخفيضات', icon: '🔥' },
+        { path: '/seller/coupons', label: 'كوبونات المتجر', icon: '🎟️' }
+      ]
+    },
+    {
+      key: 'store',
+      title: 'التواصل وإعدادات المتجر',
+      icon: '⚙️',
+      items: [
+        { path: '/seller/chat', label: 'رسائل العملاء', icon: '💬' },
+        { path: '/seller/settings', label: 'إعدادات المتجر والموقع', icon: '🛠️' }
+      ]
+    }
   ];
 
   ngOnInit(): void {
     this.seller.getSettings().subscribe({ next: (r) => this.store.set(r?.data || r) });
     this.loadNotifs();
+    this.expandActiveGroup(this.router.url);
+    this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe((e) => this.expandActiveGroup(e.urlAfterRedirects));
+  }
+
+  toggleGroup(key: string): void {
+    this.openGroups.update((curr) => ({ ...curr, [key]: !curr[key] }));
+  }
+
+  isGroupOpen(key: string): boolean {
+    return !!this.openGroups()[key];
+  }
+
+  isGroupActive(group: SellerNavGroup): boolean {
+    const url = this.router.url;
+    return group.items.some((item) => url.startsWith(item.path));
+  }
+
+  private expandActiveGroup(url: string): void {
+    const match = this.menuGroups.find((g) => g.items.some((item) => url.startsWith(item.path)));
+    if (match) {
+      this.openGroups.update((curr) => ({ ...curr, [match.key]: true }));
+    }
   }
 
   loadNotifs() {
